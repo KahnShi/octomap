@@ -36,7 +36,7 @@
 
 using namespace std;
 using namespace octomap;
-
+using namespace octomath;
 
 void print_query_info(point3d query, OcTreeNode* node) {
   if (node != NULL) {
@@ -51,15 +51,48 @@ int main(int argc, char** argv) {
   cout << endl;
   cout << "generating example map" << endl;
 
-  OcTree tree (0.1);  // create empty tree with resolution 0.1
-
+  float resolution_value = 0.1;
+  float step_value = resolution_value / 2.0f;
+  OcTree tree (resolution_value);  // create empty tree with resolution 0.1
+  Pose6D rot = Pose6D(0,0,0,0,0,M_PI/6.0f);
 
   // insert some measurements of occupied cells
 
-  for (int x=-20; x<20; x++) {
-    for (int y=-20; y<20; y++) {
-      for (int z=-20; z<20; z++) {
-        point3d endpoint ((float) x*0.05f, (float) y*0.05f, (float) z*0.05f);
+  // Truck's roof above drivers
+  int x_min = - (int)(1.0f/resolution_value);
+  int x_max = - x_min;
+  int y_min = - (int)(1.5f/resolution_value);
+  int y_max = - y_min;
+  int z_min = - (int)(1.0f/resolution_value);
+  int z_max = - z_min;
+
+  cout << "Roof's size is x y z:" << x_max << " " << y_max << " " << z_max << "\n";
+
+  for (int x=x_min; x<x_max; x++) {
+    for (int y=y_min; y<y_max; y++) {
+      for (int z=z_min; z<z_max; z++) {
+        Vector3 end_vec = rot.transform(Vector3((float) x*step_value+1.25f, (float) y*step_value, (float) z*step_value-0.5f));
+        point3d endpoint (end_vec.x(), end_vec.y(), end_vec.z());
+        tree.updateNode(endpoint, true); // integrate 'occupied' measurement
+      }
+    }
+  }
+
+  // Truck's whole base
+  x_min = - (int)(2.5f/resolution_value);
+  x_max = - x_min;
+  y_min = - (int)(1.5f/resolution_value);
+  y_max = - y_min;
+  z_min = - (int)(1.5f/resolution_value);
+  z_max = - z_min;
+
+  cout << "Base's size is x y z:" << x_max << " " << y_max << " " << z_max << "\n";
+
+  for (int x=x_min; x<x_max; x++) {
+    for (int y=y_min; y<y_max; y++) {
+      for (int z=z_min; z<z_max; z++) {
+        Vector3 end_vec = rot.transform(Vector3((float) x*0.05f+0.5f, (float) y*0.05f, (float) z*0.05f+0.75f));
+        point3d endpoint (end_vec.x(), end_vec.y(), end_vec.z());
         tree.updateNode(endpoint, true); // integrate 'occupied' measurement
       }
     }
@@ -67,14 +100,24 @@ int main(int argc, char** argv) {
 
   // insert some measurements of free cells
 
-  for (int x=-30; x<30; x++) {
-    for (int y=-30; y<30; y++) {
-      for (int z=-30; z<30; z++) {
-        point3d endpoint ((float) x*0.02f-1.0f, (float) y*0.02f-1.0f, (float) z*0.02f-1.0f);
+  //Truck's region above landing area
+  x_min = - (int)(1.5f/resolution_value);
+  x_max = - x_min;
+  y_min = - (int)(1.5f/resolution_value);
+  y_max = - y_min;
+  z_min = - (int)(1.0f/resolution_value);
+  z_max = - z_min;
+  for (int x=x_min; x<x_max; x++) {
+    for (int y=y_min; y<y_max; y++) {
+      for (int z=z_min; z<z_max; z++) {
+        Vector3 end_vec = rot.transform(Vector3((float) x*0.05f, (float) y*0.05f, (float) z*0.05f-0.5f));
+        point3d endpoint (end_vec.x(), end_vec.y(), end_vec.z());
         tree.updateNode(endpoint, false);  // integrate 'free' measurement
       }
     }
   }
+
+  cout << "Above's size is x y z:" << x_max << " " << y_max << " " << z_max << "\n";
 
   cout << endl;
   cout << "performing some queries:" << endl;
@@ -93,7 +136,7 @@ int main(int argc, char** argv) {
 
 
   cout << endl;
-  tree.writeBinary("simple_tree.bt");
+  tree.writeBinary("truck0.1.bt");
   cout << "wrote example file simple_tree.bt" << endl << endl;
   cout << "now you can use octovis to visualize: octovis simple_tree.bt"  << endl;
   cout << "Hint: hit 'F'-key in viewer to see the freespace" << endl  << endl;  

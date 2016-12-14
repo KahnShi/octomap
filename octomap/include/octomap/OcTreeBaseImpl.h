@@ -536,7 +536,10 @@ namespace octomap {
     /// (const-parameters can't be changed) -  use the copy constructor instead.
     OcTreeBaseImpl<NODE,INTERFACE>& operator=(const OcTreeBaseImpl<NODE,INTERFACE>&);
 
-  protected:  
+    //Shi
+    //protected:  
+  public:
+    //Shi finished.
     void allocNodeChildren(NODE* node);
 
     NODE* root; ///< Pointer to the root NODE, NULL for empty tree

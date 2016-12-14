@@ -462,7 +462,6 @@ namespace octomap {
         if (!nodeHasChildren(curNode)) { // TODO similar check to nodeChildExists?
           return curNode;
         } else {
-          // it is not, search failed
           return NULL;
         }
       }

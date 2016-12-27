@@ -460,12 +460,18 @@ namespace octomap {
         // we expected a child but did not get it
         // is the current node a leaf already?
         if (!nodeHasChildren(curNode)) { // TODO similar check to nodeChildExists?
-          return curNode;
+          {
+            //Shi add for depth
+            curNode->depth = tree_depth-i;
+            return curNode;
+          }
         } else {
           return NULL;
         }
       }
     } // end for
+    //Shi add for depth
+    curNode->depth = depth;
     return curNode;
   }
 

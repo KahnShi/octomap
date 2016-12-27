@@ -37,14 +37,14 @@ namespace octomap {
   OcTreeDataNode<T>::OcTreeDataNode()
    : children(NULL)
   {
-
+    depth = -1;
   }
 
   template <typename T>
   OcTreeDataNode<T>::OcTreeDataNode(T initVal)
    : children(NULL), value(initVal)
   {
-
+    depth = -1;
   }
 
   template <typename T>

@@ -51,6 +51,7 @@ namespace octomap {
   OcTreeDataNode<T>::OcTreeDataNode(const OcTreeDataNode<T>& rhs)
    : children(NULL), value(rhs.value)
   {
+    depth = -1;
     if (rhs.children != NULL){
       allocChildren();
       for (unsigned i = 0; i<8; ++i){

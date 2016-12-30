@@ -84,9 +84,7 @@ namespace octomap {
     /// Equals operator, compares if the stored value is identical
     bool operator==(const OcTreeDataNode& rhs) const;
     
-    // Shi's add
-    // Depth is from 1 to 16
-    int depth;
+    
     
 
 

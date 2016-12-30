@@ -37,21 +37,20 @@ namespace octomap {
   OcTreeDataNode<T>::OcTreeDataNode()
    : children(NULL)
   {
-    depth = -1;
+
   }
 
   template <typename T>
   OcTreeDataNode<T>::OcTreeDataNode(T initVal)
    : children(NULL), value(initVal)
   {
-    depth = -1;
+
   }
 
   template <typename T>
   OcTreeDataNode<T>::OcTreeDataNode(const OcTreeDataNode<T>& rhs)
    : children(NULL), value(rhs.value)
   {
-    depth = -1;
     if (rhs.children != NULL){
       allocChildren();
       for (unsigned i = 0; i<8; ++i){

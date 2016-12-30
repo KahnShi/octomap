@@ -417,6 +417,20 @@ namespace octomap {
 
   }
 
+  // Shi's add
+  template <class NODE,class I>
+  NODE* OcTreeBaseImpl<NODE,I>::searchReturnDepth(const point3d& value, unsigned int depth, int& cur_depth) {
+    OcTreeKey key;
+    if (!coordToKeyChecked(value, key)){
+      OCTOMAP_ERROR_STR("Error in search: ["<< value <<"] is out of OcTree bounds!");
+      return NULL;
+    }
+    else {
+      return this->searchReturnDepth(key, depth, cur_depth);
+    }
+
+  }
+
   template <class NODE,class I>
   NODE* OcTreeBaseImpl<NODE,I>::search(double x, double y, double z, unsigned int depth) const {
     OcTreeKey key;
@@ -460,18 +474,61 @@ namespace octomap {
         // we expected a child but did not get it
         // is the current node a leaf already?
         if (!nodeHasChildren(curNode)) { // TODO similar check to nodeChildExists?
-          {
-            //Shi add for depth
-            curNode->depth = tree_depth-i;
-            return curNode;
-          }
+          return curNode;
         } else {
+          // it is not, search failed
           return NULL;
         }
       }
     } // end for
-    //Shi add for depth
-    curNode->depth = depth;
+    return curNode;
+  }
+
+
+  // Shi's add
+  template <class NODE,class I>
+  NODE* OcTreeBaseImpl<NODE,I>::searchReturnDepth (const OcTreeKey& key, unsigned int depth, int& cur_depth) {
+    assert(depth <= tree_depth);
+    if (root == NULL)
+      return NULL;
+
+    if (depth == 0)
+      depth = tree_depth;
+
+
+
+    // generate appropriate key_at_depth for queried depth
+    OcTreeKey key_at_depth = key;
+    if (depth != tree_depth)
+      key_at_depth = adjustKeyAtDepth(key, depth);
+
+    NODE* curNode (root);
+
+    int diff = tree_depth - depth;
+
+    // follow nodes down to requested level (for diff = 0 it's the last level)
+    for (int i=(tree_depth-1); i>=diff; --i) {
+      unsigned int pos = computeChildIdx(key_at_depth, i);
+      if (nodeChildExists(curNode, pos)) {
+        // cast needed: (nodes need to ensure it's the right pointer)
+        curNode = getNodeChild(curNode, pos);
+      } else {
+        // we expected a child but did not get it
+        // is the current node a leaf already?
+        if (!nodeHasChildren(curNode)) { // TODO similar check to nodeChildExists?
+          // Shi's add
+          cur_depth = tree_depth - i;
+          return curNode;
+        } else {
+          // it is not, search failed
+          // Shi's add
+          cur_depth = tree_depth - i;
+          return NULL;
+        }
+      }
+    } // end for
+    // Shi's add
+    cur_depth = depth;
     return curNode;
   }
 

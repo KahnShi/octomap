@@ -192,12 +192,16 @@ namespace octomap {
      */
     NODE* search(const point3d& value, unsigned int depth = 0) const;
 
+    NODE* searchReturnDepth(const point3d& value, unsigned int depth, int& cur_depth);
+
     /**
      *  Search a node at specified depth given an addressing key (depth=0: search full tree depth)
      *  You need to check if the returned node is NULL, since it can be in unknown space.
      *  @return pointer to node if found, NULL otherwise
      */
     NODE* search(const OcTreeKey& key, unsigned int depth = 0) const;
+
+    NODE* searchReturnDepth(const OcTreeKey& key, unsigned int depth, int& cur_depth);
 
     /**
      *  Delete a node (if exists) given a 3d point. Will always

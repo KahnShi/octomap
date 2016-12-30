@@ -379,85 +379,10 @@ namespace octomap {
           // current node does not have children AND it is not a new node 
           // -> expand pruned node
           this->expandNode(node);
-          //Shi's give new node free value
-          //Method 1:
-          if (depth!= this->tree_depth-1){
-            for(int ii = 0; ii < 8; ++ii)
-              {
-                if(ii == pos)
-                  continue;
-                NODE* cur_node = this->getNodeChild(node, ii);
-                cur_node->setLogOdds(this->prob_miss_log);
-
-                unsigned int diff = this->tree_depth - depth - 1;
-                OcTreeKey myKey;
-                if(!diff)
-                  {
-                    myKey = key;
-                  }
-                else
-                  {
-                    if(ii >= 4) myKey.k[2] = ((key.k[2] >> diff) << diff) + (1 << (diff-1));
-                    else myKey.k[2] = ((key.k[2] >> diff) << diff);
-                    if((ii>>1) % 2 == 1) myKey.k[1] = ((key.k[1] >> diff) << diff) + (1 << (diff-1));
-                    else myKey.k[1] = ((key.k[1] >> diff) << diff);
-                    if(ii % 2 == 1) myKey.k[0] = ((key.k[0] >> diff) << diff) + (1 << (diff-1));
-                    else myKey.k[0] = ((key.k[0] >> diff) << diff);
-                  }
-                changed_keys.insert(std::pair<OcTreeKey, bool>(myKey, true));
-              }
-          }
-          //Shi's modification finished.
         }
         else {
           // not a pruned node, create requested child
           this->createNodeChild(node, pos);
-          //SHi's
-          if (depth!= this->tree_depth-1){
-            for(int ii = 0; ii < 8; ++ii)
-              {
-                if(ii == pos)
-                  continue;
-                unsigned int diff = this->tree_depth - depth - 1;
-                OcTreeKey myKey;
-                if(!diff)
-                  {
-                    myKey = key;
-                  }
-                else
-                  {
-                    if(ii >= 4) myKey.k[2] = ((key.k[2] >> diff) << diff) + (1 << (diff-1));
-                    else myKey.k[2] = ((key.k[2] >> diff) << diff);
-                    if((ii>>1) % 2 == 1) myKey.k[1] = ((key.k[1] >> diff) << diff) + (1 << (diff-1));
-                    else myKey.k[1] = ((key.k[1] >> diff) << diff);
-                    if(ii % 2 == 1) myKey.k[0] = ((key.k[0] >> diff) << diff) + (1 << (diff-1));
-                    else myKey.k[0] = ((key.k[0] >> diff) << diff);
-
-                  }
-
-                if(!this->nodeChildExists(node, ii))
-                  {
-                    this->createNodeChild(node, ii);
-                    NODE* cur_node = this->getNodeChild(node, ii);
-                    cur_node->setLogOdds(this->prob_miss_log);
-                    changed_keys.insert(std::pair<OcTreeKey, bool>(myKey, true));
-                  }
-                else
-                  {
-                    NODE* cur_node = this->getNodeChild(node, ii);
-                    if(cur_node->getLogOdds() != this->prob_hit_log)
-                      {
-                        cur_node->setLogOdds(this->prob_miss_log);
-                        KeyBoolMap::iterator it = changed_keys.find(myKey);
-                        if (it == changed_keys.end())
-                          changed_keys.insert(std::pair<OcTreeKey,bool>(myKey, false));
-                        else if (it->second == false)
-                          changed_keys.erase(it);
-                      }
-                  }
-              }
-          }
-          //Shi's finished
           created_node = true;
         }
       }

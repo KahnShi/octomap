@@ -83,6 +83,10 @@ namespace octomap {
     #include <octomap/OcTreeIterator.hxx>
     
     OcTreeBaseImpl(double resolution);
+    /// Constructor to enable derived classes to change tree constants.
+    /// This usually requires a re-implementation of some core tree-traversal functions as well!
+    OcTreeBaseImpl(double resolution, unsigned int tree_depth, unsigned int tree_max_val);
+
     virtual ~OcTreeBaseImpl();
 
     /// Deep copy constructor
@@ -502,9 +506,6 @@ namespace octomap {
     }
 
  protected:
-    /// Constructor to enable derived classes to change tree constants.
-    /// This usually requires a re-implementation of some core tree-traversal functions as well!
-    OcTreeBaseImpl(double resolution, unsigned int tree_depth, unsigned int tree_max_val);
 
     /// initialize non-trivial members, helper for constructors
     void init();

@@ -36,10 +36,15 @@
 
 namespace octomap {
 
-	OcTree::OcTree(double resolution) 
-		: OccupancyOcTreeBase<OcTreeNode>(resolution) {
-		ocTreeMemberInit.ensureLinking();
-	};
+  OcTree::OcTree(double resolution)
+    : OccupancyOcTreeBase<OcTreeNode>(resolution) {
+    ocTreeMemberInit.ensureLinking();
+  };
+
+  OcTree::OcTree(double resolution, unsigned int tree_depth, unsigned int tree_max_val)
+    : OccupancyOcTreeBase<OcTreeNode>(resolution, tree_depth, tree_max_val) {
+    ocTreeMemberInit.ensureLinking();
+  };
 
   OcTree::OcTree(std::string _filename)
     : OccupancyOcTreeBase<OcTreeNode> (0.1)  { // resolution will be set according to tree file

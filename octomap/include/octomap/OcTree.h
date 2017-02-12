@@ -52,6 +52,9 @@ namespace octomap {
     /// Default constructor, sets resolution of leafs
     OcTree(double resolution);
 
+    /// Shi's new constructor, sets resolution of leafs, depth and max_vel (2 ^ (depth-1))
+    OcTree(double resolution, unsigned int tree_depth, unsigned int tree_max_val);
+
     /**
      * Reads an OcTree from a binary file 
     * @param _filename
